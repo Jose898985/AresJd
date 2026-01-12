@@ -47,3 +47,18 @@ if prompt := st.chat_input("Escribe tu comando..."):
     except Exception as e:
         st.error(f"ERROR DE SISTEMA: {e}")
         st.info("Intenta refrescar la página (F5) si el error persiste.")
+        try:
+        # Creamos el cliente en el momento del envío
+        client = genai.Client(api_key=CLAVE)
+        
+        with st.chat_message("assistant"):
+            # Usamos el nombre de modelo más compatible para la versión v1beta
+            response = client.models.generate_content(
+                model="gemini-1.5-flash-002", 
+                contents=prompt
+            )
+            
+            respuesta_texto = response.text
+            st.markdown(respuesta_texto)
+            st.session_state.messages.append({"role": "assistant", "content": respuesta_texto})
+
