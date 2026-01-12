@@ -135,4 +135,5 @@ if prompt := st.chat_input("Escribe tu comando..."):
         client = get_client()
         st.session_state.chat = client.chats.create(model="gemini-flash-latest")
         response = st.session_state.chat.send_message(prompt)
+
         st.markdown(response.text)
