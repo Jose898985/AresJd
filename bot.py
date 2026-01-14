@@ -7,17 +7,17 @@ app = Flask(__name__)
 
 # CONFIGURACIÓN DE ACCESO
 CLAVE = "AIzaSyBuubE6NudTGNF2Y4uKDqNf1WG-koQfb7o"
-URL_API = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={CLAVE}"
+URL_API = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={CLAVE}"
 
 @app.route("/whatsapp", methods=['POST'])
 def whatsapp_reply():
-    # Recibimos el mensaje del usuario desde WhatsApp
-    pregunta_usuario = request.values.get('Body', '')
+    # 1. Obtener mensaje de WhatsApp
+    mensaje_usuario = request.values.get('Body', '')
 
     try:
-        # Consultamos a Gemini
+        # 2. Consultar a Ares (Gemini)
         payload = {
-            "contents": [{"parts": [{"text": f"Eres Ares, responde por WhatsApp de forma breve: {pregunta_usuario}"}]}]
+            "contents": [{"parts": [{"text": f"Eres Ares, responde por WhatsApp de forma breve: {mensaje_usuario}"}]}]
         }
         headers = {'Content-Type': 'application/json'}
         response = requests.post(URL_API, json=payload, headers=headers)
@@ -26,12 +26,12 @@ def whatsapp_reply():
         if "candidates" in data:
             respuesta_ares = data["candidates"][0]["content"]["parts"][0]["text"]
         else:
-            respuesta_ares = "Lo siento, tuve un problema con mi cerebro digital. 🤖"
+            respuesta_ares = "🤖 Ares: Error de procesamiento. Verifica la configuración de la API."
 
     except Exception as e:
-        respuesta_ares = "Error de conexión. Inténtalo de nuevo en un momento."
+        respuesta_ares = "🤖 Ares: Error de conexión con el núcleo."
 
-    # Respondemos a través de Twilio
+    # 3. Responder a través de Twilio
     resp = MessagingResponse()
     resp.message(respuesta_ares)
     return str(resp)
