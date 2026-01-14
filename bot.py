@@ -7,7 +7,8 @@ app = Flask(__name__)
 # CONFIGURACIÓN CON NUEVA CLAVE
 CLAVE = "AIzaSyD2IYGK9G-2ndLDxBL8cow1fASSWJe_zNU"
 URL_API = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={CLAVE}"
-
+# Usamos gemini-2.0-flash-001 que es el nombre técnico estable según tu lista
+URL_API = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-001:generateContent?key={CLAVE}"
 @app.route("/whatsapp", methods=['POST'])
 def whatsapp_reply():
     mensaje_usuario = request.values.get('Body', '')
