@@ -1,4 +1,4 @@
 google-generativeai
-streamlit
 flask
+twilio
 pytz
