@@ -6,8 +6,8 @@ app = Flask(__name__)
 
 # CONFIGURACIÓN 2.0
 CLAVE = "AIzaSyBuubE6NudTGNF2Y4uKDqNf1WG-koQfb7o"
-URL_API = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={CLAVE}"
-
+# Usamos flash-lite para saltar el bloqueo de cuota del modelo principal
+URL_API = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key={CLAVE}"
 @app.route("/whatsapp", methods=['POST'])
 def whatsapp_reply():
     mensaje_usuario = request.values.get('Body', '')
