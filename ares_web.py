@@ -3,14 +3,15 @@ import requests
 import json
 from datetime import datetime
 
-# --- Estética ---
-st.set_page_config(page_title="Ares Universal", page_icon="🌐", layout="wide")
+# --- Interfaz Ares ---
+st.set_page_config(page_title="Ares System", page_icon="🌐", layout="wide")
 st.markdown("<style>.stApp { background: #000c14; color: white; }</style>", unsafe_allow_html=True)
 st.title("🌐 A R E S · S Y S T E M")
 
-# CLAVE Y URL (Cambiamos a gemini-pro, la ruta más estable)
-CLAVE = "AIzaSyA6F-3ZkIxuFwDCVEuvQD3m-L8jBNgddeg"
-URL_API = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={CLAVE}"
+# CONFIGURACIÓN DE TU NUEVA CLAVE
+CLAVE = "AIzaSyBuubE6NudTGNF2Y4uKDqNf1WG-koQfb7o"
+# Usamos la versión v1 estable para evitar el error 404
+URL_API = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={CLAVE}"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -25,9 +26,10 @@ if prompt := st.chat_input("Escribe tu comando..."):
         st.markdown(prompt)
 
     try:
+        # Estructura de mensaje para Gemini 1.5
         payload = {
             "contents": [{
-                "parts": [{"text": f"Eres Ares. Hoy es {datetime.now().strftime('%d/%m/%Y')}. Responde: {prompt}"}]
+                "parts": [{"text": f"Eres Ares, un asistente avanzado. Hoy es {datetime.now().strftime('%d/%m/%Y')}. Responde: {prompt}"}]
             }]
         }
         
@@ -41,9 +43,9 @@ if prompt := st.chat_input("Escribe tu comando..."):
                 st.markdown(respuesta_texto)
                 st.session_state.messages.append({"role": "assistant", "content": respuesta_texto})
         else:
-            # Si esto falla, el problema es definitivamente la API Key en Google AI Studio
-            st.error("Error crítico: El modelo 'gemini-pro' tampoco responde. Verifica tu API Key en Google AI Studio.")
-            st.write(data)
+            # Si hay error, mostramos el mensaje técnico para ajustar
+            st.error("Respuesta inesperada de Google.")
+            st.json(data)
 
     except Exception as e:
         st.error(f"Error de conexión: {e}")
