@@ -3,36 +3,40 @@ import requests
 import json
 from datetime import datetime
 
-# --- Interfaz Ares ---
+# --- Configuración Visual Estilo Ares ---
 st.set_page_config(page_title="Ares System", page_icon="🌐", layout="wide")
-st.markdown("<style>.stApp { background: #000c14; color: white; }</style>", unsafe_allow_html=True)
+st.markdown("""
+    <style>
+    .stApp { background: radial-gradient(circle, #001524 0%, #000000 100%); color: white; }
+    h1 { color: #00f2ff !important; text-shadow: 0 0 10px #00f2ff; text-align: center; font-family: 'Orbitron', sans-serif; }
+    .stChatInput { border-radius: 20px; border: 1px solid #00f2ff; }
+    </style>
+    """, unsafe_allow_html=True)
+
 st.title("🌐 A R E S · S Y S T E M")
 
-# CONFIGURACIÓN DE TU NUEVA CLAVE
+# CONFIGURACIÓN DE ACCESO (Tu nueva clave y la ruta -latest)
 CLAVE = "AIzaSyBuubE6NudTGNF2Y4uKDqNf1WG-koQfb7o"
-# Usamos la versión v1 estable para evitar el error 404
-URL_API = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={CLAVE}"
+URL_API = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={CLAVE}"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# Mostrar historial de chat
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-if prompt := st.chat_input("Escribe tu comando..."):
+if prompt := st.chat_input("Escribe tu comando Ares..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
     try:
-        # Estructura de mensaje para Gemini 1.5
+        # Petición directa a Google
         payload = {
-            "contents": [{
-                "parts": [{"text": f"Eres Ares, un asistente avanzado. Hoy es {datetime.now().strftime('%d/%m/%Y')}. Responde: {prompt}"}]
-            }]
+            "contents": [{"parts": [{"text": f"Eres Ares, un sistema inteligente. Responde: {prompt}"}]}]
         }
-        
         headers = {'Content-Type': 'application/json'}
         response = requests.post(URL_API, json=payload, headers=headers)
         data = response.json()
@@ -43,9 +47,8 @@ if prompt := st.chat_input("Escribe tu comando..."):
                 st.markdown(respuesta_texto)
                 st.session_state.messages.append({"role": "assistant", "content": respuesta_texto})
         else:
-            # Si hay error, mostramos el mensaje técnico para ajustar
-            st.error("Respuesta inesperada de Google.")
-            st.json(data)
-
+            st.error("Error de configuración de API.")
+            st.json(data) # Esto nos dirá el error exacto si persiste
+            
     except Exception as e:
         st.error(f"Error de conexión: {e}")
