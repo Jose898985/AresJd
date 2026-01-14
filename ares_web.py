@@ -2,7 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 
 # --- Estética ---
-st.set_page_config(page_title="Ares Gemini Pro", page_icon="🌐", layout="wide")
+st.set_page_config(page_title="Ares  Pro", page_icon="🌐", layout="wide")
 
 st.markdown("""
     <style>
@@ -51,4 +51,5 @@ if prompt := st.chat_input("Escribe tu comando..."):
         except Exception as e2:
             st.error(f"Error crítico de ruta: {e2}")
             st.info("Por favor, verifica que tu API Key no tenga restricciones de IP en Google AI Studio.")
+
 
