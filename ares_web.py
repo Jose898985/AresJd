@@ -4,7 +4,7 @@ from datetime import datetime
 import pytz # Para asegurar la zona horaria
 
 # --- Configuración Visual ---
-st.set_page_config(page_title="Ares Gemini Pro", page_icon="🌐", layout="wide")
+st.set_page_config(page_title="Ares  Pro", page_icon="🌐", layout="wide")
 
 st.markdown("""
     <style>
@@ -14,7 +14,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("🌐 A R E S · G E M I N I")
+st.title("🌐 A R E S · ")
 
 # Configuración de API
 CLAVE = "AIzaSyA6F-3ZkIxuFwDCVEuvQD3m-L8jBNgddeg"
@@ -57,3 +57,4 @@ if prompt := st.chat_input("Escribe tu comando..."):
             
     except Exception as e:
         st.error(f"Error de sistema: {e}")
+
