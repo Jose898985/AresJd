@@ -1,6 +1,4 @@
-google-generativeai
-streamlit
-requests
 flask
 twilio
-
+google-generativeai
+requests
