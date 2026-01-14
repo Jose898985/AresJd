@@ -10,8 +10,8 @@ st.title("🌐 A R E S · S Y S T E M")
 
 # CONFIGURACIÓN: Usamos el modelo 2.0 que aparece en tu lista oficial
 CLAVE = "AIzaSyBuubE6NudTGNF2Y4uKDqNf1WG-koQfb7o"
-URL_API = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={CLAVE}"
-
+# Usamos flash-lite para saltar el bloqueo de cuota del modelo principal
+URL_API = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key={CLAVE}"
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -43,3 +43,4 @@ if prompt := st.chat_input("Escribe tu comando..."):
 
     except Exception as e:
         st.error(f"Error de red: {e}")
+
