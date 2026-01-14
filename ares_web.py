@@ -1,5 +1,5 @@
 import streamlit as st
-from google import genai
+import google.generativeai as genai
 
 # --- Estética ---
 st.set_page_config(page_title="Ares Gemini Pro", page_icon="🌐", layout="wide")
@@ -14,11 +14,14 @@ st.markdown("""
 
 st.title("🌐 A R E S · G E M I N I")
 
+# Tu clave de API
 CLAVE = "AIzaSyA6F-3ZkIxuFwDCVEuvQD3m-L8jBNgddeg"
+genai.configure(api_key=CLAVE)
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# Historial
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
@@ -29,25 +32,16 @@ if prompt := st.chat_input("Escribe tu comando..."):
         st.markdown(prompt)
 
     try:
-        # Forzamos al cliente a usar una configuración base
-        client = genai.Client(api_key=CLAVE)
+        # Usamos la configuración clásica que es la más compatible
+        model = genai.GenerativeModel("gemini-1.5-flash")
         
         with st.chat_message("assistant"):
-            # Probamos con el ID de modelo más básico (v1)
-            response = client.models.generate_content(
-                model="gemini-1.5-flash-8b", # Versión ultra-ligera y muy estable
-                contents=prompt
-            )
+            response = model.generate_content(prompt)
+            respuesta_texto = response.text
             
-            if response.text:
-                st.markdown(response.text)
-                st.session_state.messages.append({"role": "assistant", "content": response.text})
+            st.markdown(respuesta_texto)
+            st.session_state.messages.append({"role": "assistant", "content": respuesta_texto})
             
     except Exception as e:
-        # Si el 8b falla, intentamos el pro de respaldo
-        try:
-            response = client.models.generate_content(model="gemini-1.5-pro", contents=prompt)
-            st.markdown(response.text)
-            st.session_state.messages.append({"role": "assistant", "content": response.text})
-        except Exception as e2:
-            st.error(f"Fallo de protocolo: {e2}")
+        st.error(f"Error de conexión: {e}")
+        st.info("Si el error persiste, intenta con 'gemini-pro' como modelo.")
