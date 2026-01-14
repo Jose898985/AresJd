@@ -12,7 +12,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("🌐 A R E S · G E M I N I")
+st.title("🌐 A R E S ")
 
 # Tu clave de API
 CLAVE = "AIzaSyA6F-3ZkIxuFwDCVEuvQD3m-L8jBNgddeg"
@@ -51,3 +51,4 @@ if prompt := st.chat_input("Escribe tu comando..."):
         except Exception as e2:
             st.error(f"Error crítico de ruta: {e2}")
             st.info("Por favor, verifica que tu API Key no tenga restricciones de IP en Google AI Studio.")
+
