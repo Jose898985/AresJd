@@ -8,7 +8,8 @@ st.title("🌐 A R E S · S Y S T E M")
 
 # NUEVA CONFIGURACIÓN CON TU CLAVE DE AI STUDIO
 CLAVE = "AIzaSyD2IYGK9G-2ndLDxBL8cow1fASSWJe_zNU"
-URL_API = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={CLAVE}"
+# Usamos gemini-2.0-flash-001 que es el nombre técnico estable según tu lista
+URL_API = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-001:generateContent?key={CLAVE}"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -41,3 +42,4 @@ if prompt := st.chat_input("Escribe tu comando Ares..."):
 
     except Exception as e:
         st.error(f"Error de conexión: {e}")
+
