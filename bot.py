@@ -4,29 +4,19 @@ import requests
 
 app = Flask(__name__)
 
-# CONFIGURACIÓN CON TU NUEVA CLAVE LIMPIA
 CLAVE = "AIzaSyC1brfBJ3M804nP_wOc7HWilaRwAwyrIM8"
-URL_API = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={CLAVE}"
+URL_API = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key={CLAVE}"
 
 @app.route("/whatsapp", methods=['POST'])
 def whatsapp_reply():
     mensaje_usuario = request.values.get('Body', '')
-    
     try:
-        payload = {
-            "contents": [{"parts": [{"text": f"Responde como Ares por WhatsApp (breve): {mensaje_usuario}"}]}]
-        }
-        headers = {'Content-Type': 'application/json'}
-        r = requests.post(URL_API, json=payload, headers=headers)
+        payload = {"contents": [{"parts": [{"text": f"Responde breve: {mensaje_usuario}"}]}]}
+        r = requests.post(URL_API, json=payload, headers={'Content-Type': 'application/json'})
         data = r.json()
-
-        if "candidates" in data:
-            respuesta_ares = data["candidates"][0]["content"]["parts"][0]["text"]
-        else:
-            respuesta_ares = "🤖 Ares: Sistema en mantenimiento de cuota. Reintente."
-
-    except Exception as e:
-        respuesta_ares = "🤖 Ares: Error de conexión."
+        respuesta_ares = data["candidates"][0]["content"]["parts"][0]["text"] if "candidates" in data else "🤖 Ares: Reintentando conexión..."
+    except:
+        respuesta_ares = "🤖 Ares: Error de red."
 
     resp = MessagingResponse()
     resp.message(respuesta_ares)
