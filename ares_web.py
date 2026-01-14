@@ -2,14 +2,12 @@ import streamlit as st
 import requests
 from datetime import datetime
 
-# --- Interfaz ---
 st.set_page_config(page_title="Ares System", page_icon="🌐")
 st.title("🌐 A R E S · S Y S T E M")
 
-# Configuración limpia
 CLAVE = "AIzaSyBuubE6NudTGNF2Y4uKDqNf1WG-koQfb7o"
-# Forzamos la versión v1 estable con el modelo flash
-URL_API = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={CLAVE}"
+# Cambiamos a 'gemini-pro' que es el nombre estándar en la v1
+URL_API = f"https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key={key=AIzaSyBuubE6NudTGNF2Y4uKDqNf1WG-koQfb7}"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -24,8 +22,9 @@ if prompt := st.chat_input("Escribe aquí..."):
         st.markdown(prompt)
 
     try:
+        # Estructura obligatoria para Gemini Pro
         payload = {
-            "contents": [{"parts": [{"text": f"Eres Ares, un sistema operativo inteligente. Responde: {prompt}"}]}]
+            "contents": [{"parts": [{"text": prompt}]}]
         }
         headers = {'Content-Type': 'application/json'}
         response = requests.post(URL_API, json=payload, headers=headers)
@@ -37,8 +36,7 @@ if prompt := st.chat_input("Escribe aquí..."):
                 st.markdown(respuesta)
                 st.session_state.messages.append({"role": "assistant", "content": respuesta})
         else:
-            # Si falla, este mensaje nos dirá el motivo exacto de Google
-            st.error("Respuesta fallida del núcleo.")
+            st.error("El núcleo sigue sin reconocer el modelo. Intentando diagnóstico...")
             st.write(data) 
 
     except Exception as e:
