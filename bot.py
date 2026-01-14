@@ -1,41 +1,37 @@
 import google.generativeai as genai
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
-from datetime import datetime
 
 app = Flask(__name__)
 
-# --- Configuración del Núcleo Ares ---
+# Configuración idéntica a tu web funcional
 CLAVE = "AIzaSyAGRktuSRioeoFdInaffp7erkkMnkR-5Io"
 genai.configure(api_key=CLAVE)
 
 @app.route("/whatsapp", methods=['POST'])
 def whatsapp_reply():
-    # 1. Capturar mensaje del usuario
+    # 1. Obtener mensaje
     mensaje_usuario = request.values.get('Body', '')
-    ahora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     
     try:
-        # 2. Selección automática del modelo (igual que tu web funcional)
+        # 2. Selección de modelo dinámica (como en tu web)
         modelos = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
         modelo_final = next((m for m in modelos if "flash" in m), modelos[0])
         
-        # 3. Configuración del modelo
-        model = genai.GenerativeModel(
-            model_name=modelo_final,
-            system_instruction=f"Eres Ares, un asistente avanzado. Hoy es {ahora}. Responde de forma muy breve."
-        )
+        model = genai.GenerativeModel(modelo_final)
         
-        # 4. Generar y limpiar respuesta
+        # 3. Generar respuesta
         response = model.generate_content(mensaje_usuario)
-        texto_ares = response.text.strip() # Limpiamos espacios extra
+        texto_ares = response.text.strip()
 
     except Exception as e:
-        texto_ares = f"🤖 Ares: Error interno ({str(e)})"
+        texto_ares = "🤖 Ares: Error interno."
 
-    # 5. Respuesta en formato Twilio (Crucial para que llegue el mensaje)
+    # 4. Formato TwiML CORRECTO (Crucial para WhatsApp)
     resp = MessagingResponse()
     resp.message(texto_ares)
+    
+    # Devolvemos la respuesta como string XML
     return str(resp)
 
 if __name__ == "__main__":
