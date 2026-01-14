@@ -1,7 +1,7 @@
 import streamlit as st
 from google import genai
 
-# --- Configuración Visual ---
+# --- Estética ---
 st.set_page_config(page_title="Ares Gemini Pro", page_icon="🌐", layout="wide")
 
 st.markdown("""
@@ -14,40 +14,41 @@ st.markdown("""
 
 st.title("🌐 A R E S · G E M I N I")
 
-# --- CONEXIÓN CON TU NUEVA CLAVE ---
+# Tu nueva clave
 CLAVE = "AIzaSyA6F-3ZkIxuFwDCVEuvQD3m-L8jBNgddeg"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Dibujar historial
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# Entrada de usuario
 if prompt := st.chat_input("Escribe tu comando..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
     try:
-        # Iniciamos el cliente con la nueva clave
         client = genai.Client(api_key=CLAVE)
-        
         with st.chat_message("assistant"):
-            # Usamos gemini-1.5-flash para máxima estabilidad
+            # Cambiamos a esta versión específica para evitar el error 404
             response = client.models.generate_content(
-                model="gemini-1.5-flash", 
+                model="models/gemini-1.5-flash-002", 
                 contents=prompt
             )
-            
             respuesta_texto = response.text
             st.markdown(respuesta_texto)
             st.session_state.messages.append({"role": "assistant", "content": respuesta_texto})
             
     except Exception as e:
-        if "429" in str(e):
-            st.error("🚦 Límite de mensajes alcanzado. Espera 30 segundos.")
+        # Si vuelve a dar 404, intentamos con el nombre corto
+        if "404" in str(e):
+            try:
+                response = client.models.generate_content(model="gemini-pro", contents=prompt)
+                st.markdown(response.text)
+                st.session_state.messages.append({"role": "assistant", "content": response.text})
+            except:
+                st.error("Error de ruta de modelo. Intenta refrescar la página.")
         else:
-            st.error(f"⚠️ Error de sistema: {e}")
+            st.error(f"Error de sistema: {e}")
