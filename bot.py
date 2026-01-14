@@ -4,8 +4,10 @@ import requests
 
 app = Flask(__name__)
 
-CLAVE = "AIzaSyC1brfBJ3M804nP_wOc7HWilaRwAwyrIM8"
-URL_API = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key={CLAVE}"
+CLAVE = "AIzaSyAGRktuSRioeoFdInaffp7erkkMnkR-5Io"
+genai.configure(api_key=CLAVE)
+
+
 
 @app.route("/whatsapp", methods=['POST'])
 def whatsapp_reply():
