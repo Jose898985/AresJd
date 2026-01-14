@@ -1,6 +1,6 @@
+import google.generativeai as genai  # <--- ESTA LÍNEA ES LA QUE FALTA
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
-import google.generativeai as genai
 from datetime import datetime
 
 app = Flask(__name__)
@@ -15,27 +15,27 @@ def whatsapp_reply():
     ahora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     
     try:
-        # 1. Buscamos el modelo disponible (igual que en tu web)
+        # 1. Buscamos el modelo (usando la lógica de tu web que ya funciona)
         modelos_disponibles = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-        modelo_a_usar = next((m for m in modelos_disponibles if "flash" in m), modelos_disponibles[0])
+        # Priorizamos Gemini 2.5 Flash que aparece en tus cuotas
+        modelo_a_usar = next((m for m in modelos_disponibles if "2.5" in m), modelos_disponibles[0])
         
-        # 2. Configuramos el modelo con su instrucción de sistema
-        instruccion_sistema = f"Eres Ares, un asistente avanzado para WhatsApp. La fecha y hora actual es: {ahora}. Responde de forma concisa."
+        # 2. Instrucción de sistema
+        instruccion_sistema = f"Eres Ares, un asistente avanzado. La fecha y hora actual es: {ahora}. Responde de forma concisa."
         
         model = genai.GenerativeModel(
             model_name=modelo_a_usar,
             system_instruction=instruccion_sistema
         )
         
-        # 3. Generamos la respuesta
+        # 3. Generar respuesta
         response = model.generate_content(mensaje_usuario)
         respuesta_ares = response.text
 
     except Exception as e:
-        # Si algo falla, Ares nos avisará del error técnico
-        respuesta_ares = f"🤖 Ares: Error de sistema detectado. ({str(e)})"
+        respuesta_ares = f"🤖 Ares: Error técnico. ({str(e)})"
 
-    # 4. Enviamos la respuesta a WhatsApp a través de Twilio
+    # 4. Enviar a Twilio
     resp = MessagingResponse()
     resp.message(respuesta_ares)
     return str(resp)
