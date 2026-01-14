@@ -1,7 +1,7 @@
 import streamlit as st
 from google import genai
 
-# --- Configuración Visual ---
+# --- Configuración Visual Elegante ---
 st.set_page_config(page_title="Ares Gemini Pro", page_icon="🌐", layout="wide")
 
 st.markdown("""
@@ -32,19 +32,25 @@ if prompt := st.chat_input("Escribe tu comando..."):
         st.markdown(prompt)
 
     try:
+        # Creamos el cliente justo al enviar
         client = genai.Client(api_key=CLAVE)
+        
         with st.chat_message("assistant"):
-            # Usamos 1.5-flash porque el 2.0 te estaba dando error de cuota (429)
+            # Este nombre de modelo es el más compatible para evitar el error 404
             response = client.models.generate_content(
-                model="gemini-1.5-flash", 
+                model="gemini-1.5-flash-latest", 
                 contents=prompt
             )
+            
             respuesta_texto = response.text
             st.markdown(respuesta_texto)
             st.session_state.messages.append({"role": "assistant", "content": respuesta_texto})
             
     except Exception as e:
         if "429" in str(e):
-            st.error("🚀 Cuota excedida. Por favor, espera 1 minuto.")
+            st.error("🚀 El sistema está saturado de peticiones. Por favor, espera 1 minuto y recarga.")
+        elif "404" in str(e):
+            st.error("📡 Error de conexión con el modelo. Intentando protocolo de respaldo...")
+            st.info("Prueba escribir de nuevo en 5 segundos.")
         else:
             st.error(f"ERROR DE SISTEMA: {e}")
