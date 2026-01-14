@@ -1,15 +1,15 @@
 import streamlit as st
 import requests
 
-# --- Configuración Visual ---
+# --- Interfaz Ares ---
 st.set_page_config(page_title="Ares System 2.0", page_icon="🌐", layout="wide")
 st.markdown("<style>.stApp { background: #000c14; color: white; }</style>", unsafe_allow_html=True)
 st.title("🌐 A R E S · S Y S T E M")
 
-# CONFIGURACIÓN CON TU NUEVA CLAVE LIMPIA
+# CONFIGURACIÓN
 CLAVE = "AIzaSyC1brfBJ3M804nP_wOc7HWilaRwAwyrIM8"
-# Usamos el modelo 2.0 estable de tu lista
-URL_API = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={CLAVE}"
+# Usamos el modelo LITE que tiene cuotas más abiertas
+URL_API = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key={CLAVE}"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -24,9 +24,7 @@ if prompt := st.chat_input("Comando para Ares..."):
         st.markdown(prompt)
 
     try:
-        payload = {
-            "contents": [{"parts": [{"text": f"Eres Ares, un sistema inteligente. Responde de forma breve y eficiente: {prompt}"}]}]
-        }
+        payload = {"contents": [{"parts": [{"text": prompt}]}]}
         headers = {'Content-Type': 'application/json'}
         response = requests.post(URL_API, json=payload, headers=headers)
         data = response.json()
@@ -37,8 +35,7 @@ if prompt := st.chat_input("Comando para Ares..."):
                 st.markdown(respuesta)
                 st.session_state.messages.append({"role": "assistant", "content": respuesta})
         else:
-            st.error("Error de respuesta del núcleo.")
+            st.error("Error de cuota en el núcleo.")
             st.json(data) 
-
     except Exception as e:
         st.error(f"Fallo de conexión: {e}")
